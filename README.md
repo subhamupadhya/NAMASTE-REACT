@@ -18,3 +18,19 @@
 - HTTPs
 - Tree shaking - remove unused code 
 - Different dev and prod bundles
+
+
+// NAMASTE FOOD
+
+/*
+* Header
+--> Logo
+--> Nav items
+* Body
+--> Search
+--> ResturantContainer
+  --> Resturant card
+    --->Img
+    --->Name, Rating, Cuisine, Delivery Time
+* Footer
+*/

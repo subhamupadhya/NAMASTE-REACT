@@ -1,67 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-
-/*
-* Header
---> Logo
---> Nav items
-* Body
---> Search
---> ResturantContainer
-  --> Resturant card
-    --->Img
-    --->Name, Rating, Cuisine, Delivery Time
-* Footer
-*/
-
-const Header = () => {
-  return (
-    <div className="header">
-      <div className="logo-container">
-        <img
-          className="Logo"
-          src="https://www.logodesign.net/logo/smoking-burger-with-lettuce-3624ld.png"
-          alt="logo"
-        />
-      </div>
-      <div className="nav-items">
-        <ul>
-          <li>Home</li>
-          <li>About us</li>
-          <li>Contact us</li>
-          <li>Cart</li>
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-const ResturantCard = (props) => {
-  const { resData } = props;
-
-  const {
-    name,
-    avgRating,
-    cuisines,
-    costForTwo,
-    deliveryTime,
-  } = resData?.data;
-
-  return (
-    <div className="resturant-card" style={{ backgroundColor: "#f0f0f0" }}>
-      <img
-        className="resturant-logo"
-        alt="resturant-logo"
-        src={resData.data.imageUrl}
-      />
-      <h3>{name}</h3>
-      <h4>{cuisines.join(", ")}</h4>
-      <h4>{avgRating} stars</h4>
-      <h4>₹{costForTwo / 100} FOR TWO</h4>
-      <h4>{deliveryTime} minutes</h4>
-    </div>
-  );
-};
+import Header from "./components/Header.js";
+import Body from "./components/Body.js";
 
 
 const restaurantList = [
@@ -230,21 +170,6 @@ const restaurantList = [
   },
 ];
 
-const Body = () => {
-  return (
-    <div className="body">
-      <div className="Search">Search</div>
-      <div
-        className="resturant-container"
-        style={{ display: "flex", flexWrap: "wrap" }}
-      >
-        {restaurantList.map((restaurant, index) => (
-          <ResturantCard key={index} resData={restaurant} />
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const AppLayout = () => {
   return (
