@@ -34,3 +34,24 @@
     --->Name, Rating, Cuisine, Delivery Time
 * Footer
 */
+
+
+Two types of export\ import
+
+- Default Export/Import
+
+export default component;
+import component from "path";
+
+- Named Export/Import
+
+export const Component;
+import {component} from "path";
+
+
+// can i do default export using named export
+
+// React Hooks
+(Normal js utility functions)
+-useState() - Superpowerful state variables in react
+- useEffect()

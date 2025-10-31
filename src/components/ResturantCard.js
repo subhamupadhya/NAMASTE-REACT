@@ -24,3 +24,5 @@ const ResturantCard = (props) => {
     </div>
   );
 };
+
+export default ResturantCard;
