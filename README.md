@@ -55,3 +55,6 @@ import {component} from "path";
 (Normal js utility functions)
 -useState() - Superpowerful state variables in react
 - useEffect()
+
+
+// when a state variable updates react will re-render my components
