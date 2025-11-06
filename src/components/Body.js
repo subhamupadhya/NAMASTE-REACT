@@ -8,7 +8,12 @@ const Body = () => {
   const [restaurantList, setRestaurantList] = useState(restaurantData);
   // const [restaurantList, setRestaurantList] = useState([]);
 
+  const [filteredResturant, setFilteredResturant] = useState([]);
 
+  const [SearchText, setSearchText] = useState("");
+
+  // whenever state variables update, react triggers a reconciliation cycle(re-renders the component) 
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -27,6 +32,9 @@ const Body = () => {
     setRestaurantList(
       json?.data?.cards?.[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards || []
     );
+    setFilteredResturant(
+      json?.data?.cards?.[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards || []
+    );
   };
 
   // conditional rendering
@@ -37,6 +45,32 @@ const Body = () => {
   ) : (
     <div className="body">
       <div className="filter">
+        <div className="search">
+          <input 
+          type="text" 
+          className="search-box" 
+          value={SearchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+          />
+          <button 
+          onClick={()=> {
+            // filter the resturant cards and update the UI
+            console.log(SearchText);
+
+            const filteredResturant = restaurantList.filter(
+              (res) => 
+              res.data.name.toLowerCase().includes(SearchText.toLowerCase())
+            );
+
+            setRestaurantList(filteredResturant);
+
+          }}
+          >
+          Search
+          </button>
+        </div>
         <button
           className="Filter-btn"
           onClick={() => {
@@ -54,7 +88,7 @@ const Body = () => {
         className="resturant-container"
         style={{ display: "flex", flexWrap: "wrap" }}
       >
-        {restaurantList.map((restaurant, index) => (
+        {filteredResturant.map((restaurant, index) => (
           <ResturantCard key={index} resData={restaurant} />
         ))}
       </div>
