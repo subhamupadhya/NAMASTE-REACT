@@ -1,13 +1,16 @@
 import ResturantCard from "./ResturantCard";
 import restaurantData from "../utils/mockData";
 import { useState, useEffect } from "react";
+import Shimmer from "./Shimmer";
 
 const Body = () => {
   // initialize state with imported data
   const [restaurantList, setRestaurantList] = useState(restaurantData);
+  // const [restaurantList, setRestaurantList] = useState([]);
+
 
   useEffect(() => {
-    fetchData()/////////////////////////////;
+    fetchData();
   }, []);
 
   // Added async before fetchData
@@ -15,7 +18,9 @@ const Body = () => {
     const data = await fetch(
       "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=12.9716&lng=77.5946&restaurantId=334475"
     );
-    const json = await data.json();
+    const text = await data.text();
+    if (!text) return; 
+    const json = JSON.parse(text);
 
     console.log(json);
     // Fixed optional chaining and property access
@@ -24,11 +29,12 @@ const Body = () => {
     );
   };
 
-  if (restaurantList.length === 0) {
-    return <h1>Loading....</h1>;
-  }
+  // conditional rendering
 
-  return (
+
+  return restaurantList.length === 0 ? (
+    <Shimmer />
+  ) : (
     <div className="body">
       <div className="filter">
         <button
