@@ -5,6 +5,8 @@ import Body from "./components/Body";
 import About from "./components/About";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Contact from "./components/Contact";
+import Error from "./components/Error";
+
 
 const AppLayout = () => {
   return (
@@ -12,7 +14,7 @@ const AppLayout = () => {
       <Header />
       <Routes>
         {/* Home route */}
-        <Route path="/" element={<Body />} />
+        <Route path="/" element={<Body />} errorElement={<Error />} />
 
         {/* About route */}
         <Route path="/about" element={<About />} />
