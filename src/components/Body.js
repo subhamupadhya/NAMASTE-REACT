@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Shimmer from "./Shimmer";
 
 const Body = () => {
-  const [restaurantList, setRestaurantList] = useState(restaurantData);
+  const [restaurantList, setRestaurantList] = useState([]);
   const [filteredResturant, setFilteredResturant] = useState([]);
   const [SearchText, setSearchText] = useState("");
 
@@ -14,38 +14,63 @@ const Body = () => {
 
   const fetchData = async () => {
     try {
-      const data = await fetch(
+      const response = await fetch(
         `https://api.allorigins.win/raw?url=${encodeURIComponent(
           "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9716&lng=77.5946&page_type=DESKTOP_WEB_LISTING"
         )}`
       );
-      const json = await data.json();
-      console.log(json);
 
-      // ✅ Correct extraction of restaurant data from API
+      const text = await response.text();
+      let json;
+
+      // Try to safely parse JSON
+      try {
+        json = JSON.parse(text);
+      } catch (err) {
+        console.error("Invalid JSON received from API:", err);
+        // Use mock data as fallback
+        setRestaurantList(restaurantData);
+        setFilteredResturant(restaurantData);
+        return;
+      }
+
+      // Extract restaurant list safely
       const restaurants =
-        json?.data?.cards
-          ?.find(
-            (c) =>
-              c?.card?.card?.gridElements?.infoWithStyle?.restaurants
-          )?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
+        json?.data?.cards?.find(
+          (c) =>
+            c?.card?.card?.gridElements?.infoWithStyle?.restaurants
+        )?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
 
-      setRestaurantList(restaurants);
-      setFilteredResturant(restaurants);
+      // If API didn’t return any restaurants, use mock data
+      if (restaurants.length === 0) {
+        console.warn("No restaurants found in API response. Using mock data.");
+        setRestaurantList(restaurantData);
+        setFilteredResturant(restaurantData);
+      } else {
+        setRestaurantList(restaurants);
+        setFilteredResturant(restaurants);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
+      // Use mock data if network/API fails
+      setRestaurantList(restaurantData);
+      setFilteredResturant(restaurantData);
     }
   };
 
-  return restaurantList.length === 0 ? (
-    <Shimmer />
-  ) : (
+  // Show shimmer while loading
+  if (restaurantList.length === 0) {
+    return <Shimmer />;
+  }
+
+  return (
     <div className="body">
       <div className="filter">
         <div className="search">
           <input
             type="text"
             className="search-box"
+            placeholder="Search restaurants..."
             value={SearchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
