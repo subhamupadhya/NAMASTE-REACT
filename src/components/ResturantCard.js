@@ -1,28 +1,39 @@
 const ResturantCard = ({ resData }) => {
   const {
     name,
-    avgRating,
     cuisines,
+    avgRating,
     costForTwo,
-    sla,
-    cloudinaryImageId,
-  } = resData?.info || {};
+    deliveryTime,
+    imageUrl,
+  } = resData || {};
 
   return (
-    <div className="resturant-card" style={{ backgroundColor: "#f0f0f0" }}>
+    <div
+      className="restaurant-card"
+      style={{
+        backgroundColor: "#f9f9f9",
+        borderRadius: "12px",
+        padding: "10px",
+        width: "240px",
+        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+        textAlign: "center",
+      }}
+    >
       <img
-        className="resturant-logo"
-        alt="resturant-logo"
-        src={
-          "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/" +
-          cloudinaryImageId
-        }
+        src={imageUrl}
+        alt={name}
+        style={{
+          width: "100%",
+          height: "150px",
+          objectFit: "cover",
+          borderRadius: "10px",
+        }}
       />
-      <h3>{name}</h3>
-      <h4>{cuisines?.join(", ")}</h4>
-      <h4>{avgRating} ⭐</h4>
-      <h4>{costForTwo}</h4>
-      <h4>{sla?.deliveryTime} minutes</h4>
+      <h3 style={{ margin: "10px 0 5px 0" }}>{name}</h3>
+      <p style={{ color: "gray", fontSize: "14px" }}>{cuisines?.join(", ")}</p>
+      <p>⭐ {avgRating} | ⏱️ {deliveryTime} mins</p>
+      <p>💰 ₹{costForTwo / 100} for two</p>
     </div>
   );
 };

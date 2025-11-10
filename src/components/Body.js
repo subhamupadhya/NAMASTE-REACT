@@ -5,8 +5,8 @@ import Shimmer from "./Shimmer";
 
 const Body = () => {
   const [restaurantList, setRestaurantList] = useState([]);
-  const [filteredResturant, setFilteredResturant] = useState([]);
-  const [SearchText, setSearchText] = useState("");
+  const [filteredRestaurant, setFilteredRestaurant] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -15,53 +15,46 @@ const Body = () => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(
+        `https://corsproxy.io/?${encodeURIComponent(
           "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9716&lng=77.5946&page_type=DESKTOP_WEB_LISTING"
         )}`
       );
 
-      const text = await response.text();
-      let json;
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-      // Try to safely parse JSON
-      try {
-        json = JSON.parse(text);
-      } catch (err) {
-        console.error("Invalid JSON received from API:", err);
-        // Use mock data as fallback
-        setRestaurantList(restaurantData);
-        setFilteredResturant(restaurantData);
-        return;
-      }
+      const json = await response.json();
 
-      // Extract restaurant list safely
       const restaurants =
         json?.data?.cards?.find(
-          (c) =>
-            c?.card?.card?.gridElements?.infoWithStyle?.restaurants
+          (c) => c?.card?.card?.gridElements?.infoWithStyle?.restaurants
         )?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
 
-      // If API didn’t return any restaurants, use mock data
-      if (restaurants.length === 0) {
-        console.warn("No restaurants found in API response. Using mock data.");
-        setRestaurantList(restaurantData);
-        setFilteredResturant(restaurantData);
-      } else {
-        setRestaurantList(restaurants);
-        setFilteredResturant(restaurants);
-      }
+      // ✅ Normalize data structure so both mockData & API data work the same
+      const normalizedData =
+        restaurants.length > 0
+          ? restaurants.map((res) => ({
+              data: {
+                name: res?.info?.name,
+                cuisines: res?.info?.cuisines,
+                avgRating: res?.info?.avgRating,
+                costForTwo: res?.info?.costForTwo,
+                deliveryTime: res?.info?.sla?.deliveryTime,
+                imageUrl: `https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_400/${res?.info?.cloudinaryImageId}`,
+              },
+            }))
+          : restaurantData;
+
+      setRestaurantList(normalizedData);
+      setFilteredRestaurant(normalizedData);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      // Use mock data if network/API fails
+      console.warn("⚠️ Swiggy fetch failed. Using mock data instead.", error);
       setRestaurantList(restaurantData);
-      setFilteredResturant(restaurantData);
+      setFilteredRestaurant(restaurantData);
     }
   };
 
-  // Show shimmer while loading
-  if (restaurantList.length === 0) {
+  if (!Array.isArray(filteredRestaurant) || filteredRestaurant.length === 0)
     return <Shimmer />;
-  }
 
   return (
     <div className="body">
@@ -71,17 +64,15 @@ const Body = () => {
             type="text"
             className="search-box"
             placeholder="Search restaurants..."
-            value={SearchText}
+            value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
           <button
             onClick={() => {
               const filteredData = restaurantList.filter((res) =>
-                res?.info?.name
-                  ?.toLowerCase()
-                  .includes(SearchText.toLowerCase())
+                res?.data?.name?.toLowerCase().includes(searchText.toLowerCase())
               );
-              setFilteredResturant(filteredData);
+              setFilteredRestaurant(filteredData);
             }}
           >
             Search
@@ -92,9 +83,9 @@ const Body = () => {
           className="Filter-btn"
           onClick={() => {
             const filteredList = restaurantList.filter(
-              (res) => res?.info?.avgRating > 4
+              (res) => parseFloat(res?.data?.avgRating) > 4
             );
-            setFilteredResturant(filteredList);
+            setFilteredRestaurant(filteredList);
           }}
         >
           Top Rated Restaurants
@@ -102,11 +93,17 @@ const Body = () => {
       </div>
 
       <div
-        className="resturant-container"
-        style={{ display: "flex", flexWrap: "wrap" }}
+        className="restaurant-container"
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "20px",
+          padding: "20px",
+        }}
       >
-        {filteredResturant.map((restaurant, index) => (
-          <ResturantCard key={index} resData={restaurant} />
+        {filteredRestaurant.map((restaurant, index) => (
+          <ResturantCard key={index} resData={restaurant.data} />
         ))}
       </div>
     </div>
