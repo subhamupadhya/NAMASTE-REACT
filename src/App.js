@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Body from "./components/Body";
 import About from "./components/About";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Contact from "./components/Contact";
 
 const AppLayout = () => {
   return (
@@ -15,6 +16,9 @@ const AppLayout = () => {
 
         {/* About route */}
         <Route path="/about" element={<About />} />
+
+        <Route path="/Contact" element={<Contact />} />
+
       </Routes>
     </BrowserRouter>
   );
