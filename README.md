@@ -58,3 +58,9 @@ import {component} from "path";
 
 
 // when a state variable updates react will re-render my components
+
+
+# 2 types Routing in web apps
+- client side Routing
+- Server Side Routing
+
